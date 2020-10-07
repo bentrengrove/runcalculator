@@ -4,24 +4,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.ColumnScope.gravity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.ripple.RippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.graphics.vector.VectorAssetBuilder
 import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.res.Resource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.annotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -57,9 +49,15 @@ fun AppPreview() {
 @Composable
 fun App() {
     RunCalculatorTheme {
-        Scaffold(topBar = {
-            TopAppBar(title = { Text("Pace Calculator") })
-        }) {
+        Scaffold(
+                topBar = {
+                    TopAppBar(title = { Text("Pace Calculator") })
+                },
+                drawerContent = {
+                    Text(text = "Pace Calculator")
+                    Text(text = "Time Calculator")
+                }
+        ) {
             TimeToPaceCalculator()
         }
     }
@@ -78,7 +76,7 @@ fun TimeToPaceCalculator() {
 
         val displayText = formatTimeString(timeString.value)
         val timeInSeconds = convertFormattedTimeStringToSeconds(displayText)
-        PaceResultText(timeInSeconds = timeInSeconds, distanceInKm = selectedItem.value.second, modifier = Modifier.wrapContentSize().gravity(Alignment.Start))
+        PaceResultText(timeInSeconds = timeInSeconds, distanceInKm = selectedItem.value.second, modifier = Modifier.wrapContentSize().align(Alignment.Start))
     }
 }
 
@@ -176,8 +174,7 @@ fun DistanceSelector(selectedItem: MutableState<Pair<String, Float>>, modifier: 
 @Composable
 fun PaceResultText(timeInSeconds: Int, distanceInKm: Float, modifier: Modifier = Modifier) {
     val selectedUnit = remember { mutableStateOf(DistanceUnit.KILOMETERS) }
-
-
+    
     val displayText = if (selectedUnit.value == DistanceUnit.KILOMETERS) {
         val pace = timeInSeconds / distanceInKm
         val seconds = pace % 60

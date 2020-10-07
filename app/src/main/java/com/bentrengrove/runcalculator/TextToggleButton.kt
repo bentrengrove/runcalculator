@@ -32,12 +32,10 @@ fun TextToggleGroup(
                 }
             }
             val cornerSize = 4.dp
-            val borderShape = if (index == 0) {
-                RoundedCornerShape(topLeft = cornerSize, bottomLeft = cornerSize)
-            } else if (index == items.size-1) {
-                RoundedCornerShape(topRight = cornerSize, bottomRight = cornerSize)
-            } else {
-                RectangleShape
+            val borderShape = when (index) {
+                0 -> RoundedCornerShape(topLeft = cornerSize, bottomLeft = cornerSize)
+                items.size-1 -> RoundedCornerShape(topRight = cornerSize, bottomRight = cornerSize)
+                else -> RectangleShape
             }
             TextToggleButton(checked = index == selectedIndex, onCheckedChange = onCheckedChanged, borderShape = borderShape, text = value)
         }
