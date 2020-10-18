@@ -62,7 +62,9 @@ fun TimeEntry(timeString: MutableState<String>) {
 fun PaceResultText(timeInSeconds: Int, distanceInKm: Float, modifier: Modifier = Modifier) {
     val selectedUnit = remember { mutableStateOf(DistanceUnit.KILOMETERS) }
 
-    val displayText = if (selectedUnit.value == DistanceUnit.KILOMETERS) {
+    val displayText = if (distanceInKm == 0f) {
+        "??:??"
+    } else if (selectedUnit.value == DistanceUnit.KILOMETERS) {
         val pace = timeInSeconds / distanceInKm
         val seconds = pace % 60
         val minutes = (pace - seconds) / 60

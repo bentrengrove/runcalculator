@@ -6,6 +6,7 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -90,5 +91,5 @@ private fun DrawerRow(appScreen: AppScreen, selected: Boolean, onClick: () -> Un
 private val ALL_SCREENS = listOf(AppScreen.TimeToPace, AppScreen.PaceToTime)
 private sealed class AppScreen(val title: String, val content: @Composable () -> Unit) {
     object TimeToPace: AppScreen("Pace Calculator", { TimeToPaceCalculator() })
-    object PaceToTime: AppScreen("Time Calculator", { Text("Time To Pace") })
+    object PaceToTime: AppScreen("Time Calculator", { PaceToTimeCalculator() })
 }
