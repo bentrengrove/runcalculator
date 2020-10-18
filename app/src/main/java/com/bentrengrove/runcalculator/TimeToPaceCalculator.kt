@@ -20,8 +20,8 @@ import androidx.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 
 @Composable
-fun TimeToPaceCalculator() {
-    ScrollableColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+fun TimeToPaceCalculator(modifier: Modifier = Modifier) {
+    ScrollableColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         val timeString = remember { mutableStateOf("") }
         TimeEntry(timeString = timeString)
         Divider()

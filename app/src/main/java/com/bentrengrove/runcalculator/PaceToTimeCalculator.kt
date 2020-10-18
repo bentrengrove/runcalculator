@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 @Composable
-fun PaceToTimeCalculator() {
-    ScrollableColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+fun PaceToTimeCalculator(modifier: Modifier = Modifier) {
+    ScrollableColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         val paceString = remember { mutableStateOf("") }
         val selectedUnit = remember { mutableStateOf(DistanceUnit.KILOMETERS) }
 

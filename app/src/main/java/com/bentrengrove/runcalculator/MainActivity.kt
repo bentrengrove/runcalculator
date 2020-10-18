@@ -2,6 +2,9 @@ package com.bentrengrove.runcalculator
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
@@ -40,7 +43,7 @@ fun AppPreview() {
 
 @Composable
 fun App() {
-    val screen = remember { mutableStateOf<AppScreen>(AppScreen.TimeToPace)}
+    val screen = remember { mutableStateOf<AppScreen>(AppScreen.TimeToPace) }
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
     RunCalculatorTheme {
@@ -69,7 +72,9 @@ fun App() {
             },
             scaffoldState = scaffoldState
         ) {
-            screen.value.content()
+            Crossfade(current = screen.value) { screen ->
+                screen.content(Modifier)
+            }
         }
     }
 }
@@ -89,7 +94,7 @@ private fun DrawerRow(appScreen: AppScreen, selected: Boolean, onClick: () -> Un
 }
 
 private val ALL_SCREENS = listOf(AppScreen.TimeToPace, AppScreen.PaceToTime)
-private sealed class AppScreen(val title: String, val content: @Composable () -> Unit) {
-    object TimeToPace: AppScreen("Pace Calculator", { TimeToPaceCalculator() })
-    object PaceToTime: AppScreen("Time Calculator", { PaceToTimeCalculator() })
+private sealed class AppScreen(val title: String, val content: @Composable (modifier: Modifier) -> Unit) {
+    object TimeToPace: AppScreen("Pace Calculator", { modifier -> TimeToPaceCalculator(modifier) })
+    object PaceToTime: AppScreen("Time Calculator", { modifier -> PaceToTimeCalculator(modifier) })
 }
