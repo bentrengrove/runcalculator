@@ -83,14 +83,9 @@ fun App() {
 private fun DrawerRow(appScreen: AppScreen, selected: Boolean, onClick: () -> Unit) {
     val background = if (selected) MaterialTheme.colors.primary.copy(alpha = 0.12f) else Color.Transparent
     val textColor = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
-    Text(appScreen.title,
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .background(background)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        style = MaterialTheme.typography.body2.copy(color = textColor, textAlign = TextAlign.Left)
-    )
+    ListItem(modifier = Modifier.clickable(onClick = onClick).background(background)) {
+        Text(color = textColor, text = appScreen.title)
+    }
 }
 
 private val ALL_SCREENS = listOf(AppScreen.TimeToPace, AppScreen.PaceToTime)
