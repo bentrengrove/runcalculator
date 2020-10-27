@@ -24,6 +24,8 @@ import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.bentrengrove.runcalculator.ui.RunCalculatorTheme
 
 class MainActivity : AppCompatActivity() {
@@ -43,13 +45,13 @@ fun AppPreview() {
 
 @Composable
 fun App() {
-    val screen = remember { mutableStateOf<AppScreen>(AppScreen.TimeToPace) }
+    var screen by remember { mutableStateOf<AppScreen>(AppScreen.TimeToPace) }
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
     RunCalculatorTheme {
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text(screen.value.title) }, navigationIcon = {
+                TopAppBar(title = { Text(screen.title) }, navigationIcon = {
                     Icon(
                         Icons.Default.Menu,
                         modifier = Modifier.clickable(onClick = {
@@ -62,17 +64,17 @@ fun App() {
                 Text(text = "Run Calculator", style = MaterialTheme.typography.h5, modifier = Modifier.padding(16.dp))
                 ALL_SCREENS.forEach { appScreen ->
                     DrawerRow(
-                        appScreen = appScreen,
-                        selected = appScreen == screen.value,
+                        title = appScreen.title,
+                        selected = appScreen == screen,
                         onClick = {
-                            screen.value = appScreen
+                            screen = appScreen
                             scaffoldState.drawerState.close()
                         })
                 }
             },
             scaffoldState = scaffoldState
         ) {
-            Crossfade(current = screen.value) { screen ->
+            Crossfade(current = screen) { screen ->
                 screen.content(Modifier)
             }
         }
@@ -80,11 +82,11 @@ fun App() {
 }
 
 @Composable
-private fun DrawerRow(appScreen: AppScreen, selected: Boolean, onClick: () -> Unit) {
+private fun DrawerRow(title: String, selected: Boolean, onClick: () -> Unit) {
     val background = if (selected) MaterialTheme.colors.primary.copy(alpha = 0.12f) else Color.Transparent
     val textColor = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
     ListItem(modifier = Modifier.clickable(onClick = onClick).background(background)) {
-        Text(color = textColor, text = appScreen.title)
+        Text(color = textColor, text = title)
     }
 }
 
