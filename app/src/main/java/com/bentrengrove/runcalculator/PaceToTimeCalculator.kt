@@ -14,11 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import kotlin.math.roundToInt
 
 @Composable
-fun PaceToTimeCalculator(modifier: Modifier = Modifier) {
-    ScrollableColumn(modifier = modifier.padding(horizontal = 16.dp)) {
+fun PaceToTimeCalculator(backStackEntry: NavBackStackEntry) {
+    ScrollableColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
         val paceString = remember { mutableStateOf("") }
         val selectedUnit = remember { mutableStateOf(DistanceUnit.KILOMETERS) }
 

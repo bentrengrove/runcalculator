@@ -2,30 +2,23 @@ package com.bentrengrove.runcalculator
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animatedFloat
-import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.compose.*
 import com.bentrengrove.runcalculator.ui.RunCalculatorTheme
 
 class MainActivity : AppCompatActivity() {
@@ -45,13 +38,16 @@ fun AppPreview() {
 
 @Composable
 fun App() {
-    var screen by remember { mutableStateOf<AppScreen>(AppScreen.TimeToPace) }
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+    val navController = rememberNavController()
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     RunCalculatorTheme {
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text(screen.title) }, navigationIcon = {
+                TopAppBar(title = { Text(SCREEN_MAP[currentRoute]?.title ?: "") }, navigationIcon = {
                     Icon(
                         Icons.Default.Menu,
                         modifier = Modifier.clickable(onClick = {
@@ -62,20 +58,28 @@ fun App() {
             },
             drawerContent = {
                 Text(text = "Run Calculator", style = MaterialTheme.typography.h5, modifier = Modifier.padding(16.dp))
-                ALL_SCREENS.forEach { appScreen ->
+                ALL_SCREENS.forEach { screen ->
                     DrawerRow(
-                        title = appScreen.title,
-                        selected = appScreen == screen,
+                        title = screen.title,
+                        selected = currentRoute == screen.route,
                         onClick = {
-                            screen = appScreen
+                            // This is the equivalent to popUpTo the start destination
+                            navController.popBackStack(navController.graph.startDestination, false)
+
+                            // This if check gives us a "singleTop" behavior where we do not create a
+                            // second instance of the composable if we are already on that destination
+                            if (currentRoute != screen.route) {
+                                navController.navigate(screen.route)
+                            }
+
                             scaffoldState.drawerState.close()
                         })
                 }
             },
             scaffoldState = scaffoldState
         ) {
-            Crossfade(current = screen) { screen ->
-                screen.content(Modifier)
+            NavHost(navController = navController, startDestination = AppScreen.TimeToPace.route) {
+                ALL_SCREENS.forEach { composable(it.route, content = it.content) }
             }
         }
     }
@@ -90,8 +94,9 @@ private fun DrawerRow(title: String, selected: Boolean, onClick: () -> Unit) {
     }
 }
 
-private val ALL_SCREENS = listOf(AppScreen.TimeToPace, AppScreen.PaceToTime)
-private sealed class AppScreen(val title: String, val content: @Composable (modifier: Modifier) -> Unit) {
-    object TimeToPace: AppScreen("Pace Calculator", { modifier -> TimeToPaceCalculator(modifier) })
-    object PaceToTime: AppScreen("Time Calculator", { modifier -> PaceToTimeCalculator(modifier) })
+private sealed class AppScreen(val route: String, val title: String, val content: @Composable (backStackEntry: NavBackStackEntry) -> Unit) {
+    object TimeToPace: AppScreen("timetopace", "Pace Calculator", { backStackEntry -> TimeToPaceCalculator(backStackEntry) })
+    object PaceToTime: AppScreen("pacetotime", "Time Calculator", { backStackEntry -> PaceToTimeCalculator(backStackEntry) })
 }
+private val ALL_SCREENS = listOf(AppScreen.TimeToPace, AppScreen.PaceToTime)
+private val SCREEN_MAP = ALL_SCREENS.associateBy { it.route }

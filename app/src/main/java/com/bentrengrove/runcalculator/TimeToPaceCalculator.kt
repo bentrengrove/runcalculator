@@ -16,12 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 
 @Composable
-fun TimeToPaceCalculator(modifier: Modifier = Modifier) {
-    ScrollableColumn(modifier = modifier.padding(horizontal = 16.dp)) {
+fun TimeToPaceCalculator(backStackEntry: NavBackStackEntry) {
+    ScrollableColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
         val timeString = remember { mutableStateOf("") }
         TimeEntry(timeString = timeString)
         Divider()
